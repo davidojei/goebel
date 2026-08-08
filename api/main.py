@@ -155,3 +155,79 @@ def predict_hydraulic(payload: HydraulicFeatures):
 
     return results
 
+
+# ---- IMS Bearing RUL endpoints (two stages) ----
+
+class IMSStage1Features(BaseModel):
+    features: List[float]
+
+class IMSStage2Features(BaseModel):
+    features: List[float]
+
+try:
+    ims_stage1_model = joblib.load("models/ims/stage1_model.pkl")
+    ims_stage1_features = joblib.load("models/ims/stage1_features.pkl")
+    ims_stage1_threshold = joblib.load("models/ims/stage1_threshold.pkl")
+    ims_stage1_explainer = get_explainer(ims_stage1_model)
+except FileNotFoundError:
+    ims_stage1_model = None
+
+try:
+    ims_stage2_model = joblib.load("models/ims/stage2_model.pkl")
+    ims_stage2_features = joblib.load("models/ims/stage2_features.pkl")
+    ims_stage2_explainer = get_explainer(ims_stage2_model)
+except FileNotFoundError:
+    ims_stage2_model = None
+
+
+@app.post("/predict/ims/stage1")
+def predict_ims_stage1(payload: IMSStage1Features):
+    if ims_stage1_model is None:
+        raise HTTPException(status_code=503, detail="IMS Stage 1 model not loaded")
+
+    if len(payload.features) != len(ims_stage1_features):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Expected {len(ims_stage1_features)} features, got {len(payload.features)}"
+        )
+
+    X_row = pd.DataFrame([payload.features], columns=ims_stage1_features)
+    probability = float(ims_stage1_model.predict_proba(X_row)[0][1])
+    is_degrading = probability >= ims_stage1_threshold
+
+    top_feats = top_features(ims_stage1_explainer, X_row, ims_stage1_features, n=5, class_index=1)
+    explanation = explain_prediction_text(top_feats)
+
+    return {
+        "is_degrading": bool(is_degrading),
+        "degradation_probability": round(probability, 4),
+        "threshold_used": round(ims_stage1_threshold, 4),
+        "explanation": explanation,
+        "top_features": [{"feature": f, "impact": round(float(v), 4)} for f, v in top_feats]
+    }
+
+
+@app.post("/predict/ims/stage2")
+def predict_ims_stage2(payload: IMSStage2Features):
+    if ims_stage2_model is None:
+        raise HTTPException(status_code=503, detail="IMS Stage 2 model not loaded")
+
+    if len(payload.features) != len(ims_stage2_features):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Expected {len(ims_stage2_features)} features, got {len(payload.features)}"
+        )
+
+    X_row = pd.DataFrame([payload.features], columns=ims_stage2_features)
+    predicted_pct = float(ims_stage2_model.predict(X_row)[0])
+
+    top_feats = top_features(ims_stage2_explainer, X_row, ims_stage2_features, n=5)
+    explanation = explain_prediction_text(top_feats)
+
+    return {
+        "predicted_rul_pct": round(predicted_pct, 4),
+        "note": "This is RUL as a % of the bearing's degrading-window length, not raw hours — see README for why.",
+        "explanation": explanation,
+        "top_features": [{"feature": f, "impact": round(float(v), 4)} for f, v in top_feats]
+    }
+
