@@ -118,11 +118,11 @@ with st.sidebar:
             "container": {"padding": "0", "background-color": "#1F1E1D"},
             "icon": {"color": "#8A8778", "font-size": "15px"},
             "nav-link": {
-                "font-size": "14px", "color": "#E8E6DF", "text-align": "left",
-                "margin": "2px 0", "padding": "10px 12px", "border-radius": "8px",
-                "--hover-color": "#33322F", "white-space": "nowrap",
-                "justify-content": "flex-start",
-            },
+            "font-size": "14px", "color": "#E8E6DF", "text-align": "left",
+            "margin": "2px 0px", "padding": "8px 8px",
+            "border-radius": "8px", "--hover-color": "#33322F",
+            "white-space": "nowrap", "justify-content": "flex-start",
+        },
             "nav-link-selected": {"background-color": "#D97757", "color": "white", "font-weight": "600"},
         }
     )
