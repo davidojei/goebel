@@ -118,13 +118,14 @@ with st.sidebar:
             "container": {"padding": "0", "background-color": "#1F1E1D"},
             "icon": {"color": "#8A8778", "font-size": "15px"},
             "nav-link": {
-            "font-size": "14px", "color": "#E8E6DF", "text-align": "left",
-            "margin": "2px 0px", "padding": "8px 8px",
-            "border-radius": "8px", "--hover-color": "#33322F",
-            "white-space": "nowrap", "justify-content": "flex-start",
-        },
+                "font-size": "14px", "color": "#E8E6DF", "text-align": "left",
+                "margin": "2px 0px", "padding": "8px 8px",
+                "border-radius": "8px", "--hover-color": "#33322F",
+                "white-space": "nowrap", "justify-content": "flex-start",
+            },
             "nav-link-selected": {"background-color": "#D97757", "color": "white", "font-weight": "600"},
-        }
+        },
+        key="main_nav"
     )
 
     st.markdown("---")
@@ -216,15 +217,17 @@ if page == "Turbine RUL":
 
                         # Running chart of predicted vs true RUL over the stream
                         hist_fig = go.Figure()
-                        hist_fig.add_trace(go.Scatter(x=cycles_seen, y=true_history, name="True RUL", line=dict(color="#8A8778")))
-                        hist_fig.add_trace(go.Scatter(x=cycles_seen, y=predicted_history, name="Predicted RUL", line=dict(color="#D97757")))
+                        hist_fig.add_trace(go.Scatter(x=cycles_seen, y=true_history, name="True RUL", line=dict(color="#8A8778", width=2, dash="dot")))
+                        hist_fig.add_trace(go.Scatter(x=cycles_seen, y=predicted_history, name="Predicted RUL", line=dict(color="#D97757", width=3)))
                         hist_fig.update_layout(
-                            height=280, margin=dict(l=10, r=10, t=30, b=10),
+                            title=dict(text="RUL: Predicted vs Actual", font=dict(color="#E8E6DF", size=15)),
+                            height=300, margin=dict(l=10, r=10, t=40, b=10),
                             plot_bgcolor="#33322F", paper_bgcolor="#33322F",
                             xaxis=dict(title="Cycle", gridcolor="#3A3936", color="#E8E6DF"),
-                            yaxis=dict(title="RUL", gridcolor="#3A3936", color="#E8E6DF"),
-                            font=dict(color="#E8E6DF"), legend=dict(font=dict(color="#E8E6DF"))
-                        )
+                            yaxis=dict(title="RUL (cycles)", gridcolor="#3A3936", color="#E8E6DF", rangemode="tozero"),
+                            font=dict(color="#E8E6DF"),
+                            legend=dict(font=dict(color="#E8E6DF"), orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0)
+                       )
                         history_chart_placeholder.plotly_chart(hist_fig, use_container_width=True, key=f"hist_{cycle}")
 
                     time.sleep(speed)
