@@ -390,7 +390,7 @@ elif page == "Hydraulic Health":
                     else:
                         st.error(f"API returned {response.status_code}: {response.text}")
                 except Exception as e:
-                    st.error(f"Request failed: {e}")
+                    st.error(f"RequFFest failed: {e}")
 
     else:  # Live Feed
         import time
