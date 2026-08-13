@@ -23,7 +23,6 @@ def health():
 class TurbineFeatures(BaseModel):
     features: List[float]  # ordered list matching the model's feature_cols
 
-# Load once at startup, not per-request - loading a model on every call would be slow and wasteful
 try:
     turbine_model = joblib.load("models/turbine/final_model.pkl")
     turbine_feature_names = joblib.load("models/turbine/feature_names.pkl")
@@ -48,7 +47,7 @@ def predict_turbine(payload: TurbineFeatures):
     prediction = float(turbine_model.predict(X_row)[0])
 
     top_feats = top_features(turbine_explainer, X_row, turbine_feature_names, n=5)
-    explanation = explain_prediction_text(top_feats)
+    explanation = explain_prediction_text(top_feats, subsystem="turbine")
 
     return {
         "predicted_rul": round(prediction, 2),
@@ -88,7 +87,7 @@ def predict_bearing(payload: BearingFeatures):
     predicted_class_index = list(bearing_model.classes_).index(prediction)
 
     top_feats = top_features(bearing_explainer, X_row, bearing_feature_names, n=5, class_index=predicted_class_index)
-    explanation = explain_prediction_text(top_feats)
+    explanation = explain_prediction_text(top_feats, subsystem="bearing")
 
     return {
         "predicted_fault_type": str(prediction),
@@ -146,10 +145,12 @@ def predict_hydraulic(payload: HydraulicFeatures):
         predicted_class_index = list(model.classes_).index(prediction)
 
         top_feats = top_features(hydraulic_explainers[target], X_row, expected_names, n=3, class_index=predicted_class_index)
+        explanation = explain_prediction_text(top_feats, subsystem="hydraulic")
 
         results[target] = {
             "predicted_condition": str(prediction),
             "confidence": round(float(probabilities[predicted_class_index]), 4),
+            "explanation": explanation,
             "top_features": [{"feature": f, "impact": round(float(v), 4)} for f, v in top_feats]
         }
 
@@ -196,7 +197,7 @@ def predict_ims_stage1(payload: IMSStage1Features):
     is_degrading = probability >= ims_stage1_threshold
 
     top_feats = top_features(ims_stage1_explainer, X_row, ims_stage1_features, n=5, class_index=1)
-    explanation = explain_prediction_text(top_feats)
+    explanation = explain_prediction_text(top_feats, subsystem="ims")
 
     return {
         "is_degrading": bool(is_degrading),
@@ -222,7 +223,7 @@ def predict_ims_stage2(payload: IMSStage2Features):
     predicted_pct = float(ims_stage2_model.predict(X_row)[0])
 
     top_feats = top_features(ims_stage2_explainer, X_row, ims_stage2_features, n=5)
-    explanation = explain_prediction_text(top_feats)
+    explanation = explain_prediction_text(top_feats, subsystem="ims")
 
     return {
         "predicted_rul_pct": round(predicted_pct, 4),
@@ -230,4 +231,3 @@ def predict_ims_stage2(payload: IMSStage2Features):
         "explanation": explanation,
         "top_features": [{"feature": f, "impact": round(float(v), 4)} for f, v in top_feats]
     }
-
