@@ -382,7 +382,7 @@ elif page == "Hydraulic Health":
                                 f'<p style="font-size:0.9rem; font-weight:400; color:#8A8778;">true: {sample[true_key]} · {r["confidence"]*100:.0f}% conf.</p></div>',
                                 unsafe_allow_html=True
                             )
-                        st.markdown("### Exlainakility")
+                        st.markdown("### Exlainability")
                         tabs = st.tabs(["Cooler", "Valve", "Pump", "Accumulator"])
                         for tab, (label, key, _) in zip(tabs, targets):
                             with tab:
