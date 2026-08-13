@@ -388,7 +388,7 @@ elif page == "Hydraulic Health":
                             with tab:
                                 shap_panel(result[key]["top_features"], result[key].get("explanation"), title=f"{label} — why this prediction")
                     else:
-                        st.error(f"API rooooeturned {response.status_code}: {response.text}")
+                        st.error(f"API returned {response.status_code}: {response.text}")
                 except Exception as e:
                     st.error(f"Request failed: {e}")
 
