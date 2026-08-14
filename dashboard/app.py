@@ -109,7 +109,7 @@ def shap_panel(top_features, explanation=None, title="Why this prediction"):
 from streamlit_option_menu import option_menu
 
 with st.sidebar:
-    st.markdown("## Goeujhnkmubel")
+    st.markdown("## Goeunkmubel")
     st.caption("Predictive Maintenance Platform")
 
     page = option_menu(
