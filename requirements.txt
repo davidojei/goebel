@@ -2,7 +2,7 @@ pandas
 numpy
 scipy
 scikit-learn
-xgboost
+xgboost==2.0.3
 shap
 fastapi
 uvicorn[standard]
