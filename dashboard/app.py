@@ -4,12 +4,14 @@ import requests
 import plotly.graph_objects as go
 import json
 from pathlib import Path
+import os
+
 
 st.set_page_config(page_title="Goebel — Predictive Maintenance Platform", layout="wide")
 
 APP_DIR = Path(__file__).parent  # robust — works no matter where you launch streamlit from
 SAMPLE_DIR = APP_DIR / "sample_data"
-API_BASE = "http://127.0.0.1:8000"
+API_BASE = os.environ.get("API_BASE", "http://127.0.0.1:8000")
 
 # ---- Claude-inspired theme ----
 st.markdown("""
