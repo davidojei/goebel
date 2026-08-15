@@ -44,7 +44,7 @@ def predict_turbine(payload: TurbineFeatures):
         )
 
     X_row = pd.DataFrame([payload.features], columns=turbine_feature_names)
-    prediction = float(turbine_model.predict(X_row)[0])
+    prediction = max(0.0, float(turbine_model.predict(X_row)[0]))
 
     top_feats = top_features(turbine_explainer, X_row, turbine_feature_names, n=5)
     explanation = explain_prediction_text(top_feats, subsystem="turbine")

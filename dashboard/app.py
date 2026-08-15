@@ -513,10 +513,10 @@ elif page == "IMS Bearing RUL":
         st.caption("Streaming a real bearing's entire life, in order — watch degradation probability rise as it approaches failure")
 
         col_a, col_b = st.columns(2)
-        speed = col_a.slider("Playback speed (sec/reading)", 0.02, 0.5, 0.05, key="ims_speed")
+        speed = col_a.slider("Playback speed (sec/reading)", 0.1, 0.5, 0.2, key="ims_speed")
         skip = col_b.slider("Sample every Nth reading (full stream is 983 readings)", 1, 20, 5, key="ims_skip")
 
-        start_ims = st.button("▶ Start Live Feed", type="primary", key="ims_start")
+        start_ims = st.button("▶ Start Lffffive Feed", type="primary", key="ims_start")
 
         status_ph = st.empty()
         metrics_ph = st.empty()
