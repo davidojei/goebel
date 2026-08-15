@@ -516,7 +516,7 @@ elif page == "IMS Bearing RUL":
         speed = col_a.slider("Playback speed (sec/reading)", 0.1, 0.5, 0.2, key="ims_speed")
         skip = col_b.slider("Sample every Nth reading (full stream is 983 readings)", 1, 20, 5, key="ims_skip")
 
-        start_ims = st.button("▶ Start Lffffive Feed", type="primary", key="ims_start")
+        start_ims = st.button("▶ Start Lfffive Feed", type="primary", key="ims_start")
 
         status_ph = st.empty()
         metrics_ph = st.empty()
