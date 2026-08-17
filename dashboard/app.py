@@ -110,7 +110,7 @@ from streamlit_option_menu import option_menu
 
 with st.sidebar:
     st.markdown("## Goebel")
-    st.caption("Predictive Maintenance Platform")
+    st.caption("Predictive Mafffintenance Platform")
 
     page = option_menu(
         menu_title=None,
