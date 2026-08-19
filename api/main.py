@@ -1,5 +1,5 @@
 """
-FastAPI backend serving all three Goebel models via separate endpoints.
+FastAPI backend serves all three Goebel models via separate endpoints.
 """
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -10,7 +10,7 @@ from typing import List
 
 from src.shared.shap_utils import get_explainer, top_features, explain_prediction_text
 
-app = FastAPI(title="Goebel — Multi-Asset Predictive Maintenance Platform")
+app = FastAPI(title="Goebel: Multi-Asset Predictive Maintenance Platform")
 
 
 @app.get("/health")

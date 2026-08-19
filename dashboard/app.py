@@ -7,13 +7,13 @@ from pathlib import Path
 import os
 
 
-st.set_page_config(page_title="Goebel — Predictive Maintenance Platform", layout="wide")
+st.set_page_config(page_title="Goebel: Predictive Maintenance Platform", layout="wide")
 
 APP_DIR = Path(__file__).parent  # robust — works no matter where you launch streamlit from
 SAMPLE_DIR = APP_DIR / "sample_data"
 API_BASE = os.environ.get("API_BASE", "http://127.0.0.1:8000")
 
-# ---- Claude-inspired theme ----
+# ---- Claude-inspired theme (Had to use this, the UI is really cool) ----
 st.markdown("""
 <style>
     .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
@@ -132,7 +132,7 @@ with st.sidebar:
     )
 
     st.markdown("---")
-    st.markdown("#### System Status")
+    st.markdown("System Status")
     if check_api_health():
         st.markdown('<span class="status-ok">● API Connected</span>', unsafe_allow_html=True)
     else:
@@ -173,7 +173,7 @@ if page == "Turbine RUL":
                 except Exception as e:
                     st.error(f"Request failed: {e}")
 
-    else:  # Live Feed mode
+    else: 
         import time
 
         trajectory = pd.read_csv(SAMPLE_DIR / "turbine_live_feed.csv")
@@ -198,7 +198,7 @@ if page == "Turbine RUL":
                 cycle = int(row["cycle"])
                 true_rul = row["true_RUL"]
 
-                status_placeholder.markdown(f"**Streaming cycle {cycle}** — engine reading arriving...")
+                status_placeholder.markdown(f"Streaming cycle {cycle} — engine reading arriving...")
 
                 try:
                     features = row[feature_cols].tolist()
@@ -238,11 +238,11 @@ if page == "Turbine RUL":
                     status_placeholder.error(f"Stream error at cycle {cycle}: {e}")
                     break
 
-            status_placeholder.markdown(f"**Stream complete** — {len(trajectory)} cycles processed.")
+            status_placeholder.markdown(f"Stream complete: {len(trajectory)} cycles processed.")
 
 # ==================== BEARING ====================
 elif page == "Bearing Fault":
-    st.title("Bearing — Fault Classification")
+    st.title("Bearing: Fault Classification")
 
     mode = st.radio("Mode", ["Manual Sample", "Live Feed"], horizontal=True)
 
@@ -273,7 +273,7 @@ elif page == "Bearing Fault":
                 except Exception as e:
                     st.error(f"Request failed: {e}")
 
-    else:  # Live Feed
+    else: 
         import time
 
         stream_data = pd.read_csv(SAMPLE_DIR / "bearing_live_feed.csv")
@@ -346,7 +346,7 @@ elif page == "Bearing Fault":
 
 # ==================== HYDRAULIC ====================
 elif page == "Hydraulic Health":
-    st.title("Hydraulic System — Component Health")
+    st.title("Hydraulic System: Component Health")
 
     mode = st.radio("Mode", ["Manual Sample", "Live Feed"], horizontal=True)
 
@@ -384,7 +384,7 @@ elif page == "Hydraulic Health":
                                 f'<p style="font-size:0.9rem; font-weight:400; color:#8A8778;">true: {sample[true_key]} · {r["confidence"]*100:.0f}% conf.</p></div>',
                                 unsafe_allow_html=True
                             )
-                        st.markdown("### Exlainability")
+                        st.markdown("Exlainability")
                         tabs = st.tabs(["Cooler", "Valve", "Pump", "Accumulator"])
                         for tab, (label, key, _) in zip(tabs, targets):
                             with tab:
@@ -394,13 +394,13 @@ elif page == "Hydraulic Health":
                 except Exception as e:
                     st.error(f"Request failed: {e}")
 
-    else:  # Live Feed
+    else:
         import time
 
         with open(SAMPLE_DIR / "hydraulic_live_feed.json") as f:
             stream_data = json.load(f)
 
-        st.caption("Streaming consecutive cycles across a real valve-condition transition — watch all four components live")
+        st.caption("Streaming consecutive cycles across a real valve-condition transition, watch all four components live")
 
         speed = st.slider("Playback speed (seconds per cycle)", 0.1, 2.0, 0.4, key="hydraulic_speed")
         start = st.button("▶ Start Live Feed", type="primary", key="hydraulic_start")
@@ -416,7 +416,7 @@ elif page == "Hydraulic Health":
             cycles_seen = []
 
             for i, sample in enumerate(stream_data):
-                status_ph.markdown(f"**Streaming cycle {sample['row_idx']}** — sensor reading arriving...")
+                status_ph.markdown(f"Streaming cycle {sample['row_idx']} — sensor reading arriving...")
 
                 try:
                     response = requests.post(f"{API_BASE}/predict/hydraulic", json={
@@ -465,7 +465,7 @@ elif page == "Hydraulic Health":
                     status_ph.error(f"Stream error at cycle {sample['row_idx']}: {e}")
                     break
 
-            status_ph.markdown(f"**Stream complete** — {len(stream_data)} cycles processed.")
+            status_ph.markdown(f"Stream complete — {len(stream_data)} cycles processed.")
 
 
 
@@ -473,7 +473,7 @@ elif page == "Hydraulic Health":
 
 # ==================== IMS ====================
 elif page == "IMS Bearing RUL":
-    st.title("IMS Bearing — Degradation & RUL")
+    st.title("IMS Bearing: Degradation & RUL")
 
     ims_tab1, ims_tab2, ims_tab3 = st.tabs(["Stage 1: Manual Sample", "Stage 1: Live Feed", "Stage 2: RUL Regression"])
 
@@ -510,7 +510,7 @@ elif page == "IMS Bearing RUL":
         stream_data = pd.read_csv(SAMPLE_DIR / "ims_live_feed.csv")
         feature_cols_stream = [c for c in stream_data.columns if c not in ("timestamp", "rul_hours", "label")]
 
-        st.caption("Streaming a real bearing's entire life, in order — watch degradation probability rise as it approaches failure")
+        st.caption("Streaming a real bearing's entire life, in order, watch degradation probability rise as it approaches failure")
 
         col_a, col_b = st.columns(2)
         speed = col_a.slider("Playback speed (sec/reading)", 0.1, 0.5, 0.2, key="ims_speed")
@@ -535,7 +535,7 @@ elif page == "IMS Bearing RUL":
                 row = stream_subset.iloc[i]
                 true_label = int(row["label"])
 
-                status_ph.markdown(f"**Reading {i+1}/{len(stream_subset)}** — `{row['timestamp']}` — RUL remaining: {row['rul_hours']:.1f}h")
+                status_ph.markdown(f"Reading {i+1}/{len(stream_subset)} — `{row['timestamp']}` — RUL remaining: {row['rul_hours']:.1f}h")
 
                 try:
                     features = row[feature_cols_stream].tolist()
@@ -547,7 +547,7 @@ elif page == "IMS Bearing RUL":
                         readings_seen.append(i)
 
                         if result["is_degrading"] and not first_alert_shown:
-                            status_ph.markdown(f"**⚠ DEGRADATION DETECTED** — reading {i+1}, `{row['timestamp']}`, RUL remaining: {row['rul_hours']:.1f}h")
+                            status_ph.markdown(f"⚠ DEGRADATION DETECTED — reading {i+1}, `{row['timestamp']}`, RUL remaining: {row['rul_hours']:.1f}h")
                             first_alert_shown = True
 
                         with metrics_ph.container():
@@ -561,9 +561,9 @@ elif page == "IMS Bearing RUL":
 
                         prob_fig = go.Figure()
                         prob_fig.add_trace(go.Scatter(x=readings_seen, y=prob_history, name="Degradation Probability",
-                                                        line=dict(color="#D97757", width=3), fill="tozeroy", fillcolor="rgba(217,119,87,0.15)"))
+                        line=dict(color="#D97757", width=3), fill="tozeroy", fillcolor="rgba(217,119,87,0.15)"))
                         prob_fig.add_hline(y=0.3472, line_dash="dot", line_color="#8A8778",
-                                            annotation_text="Decision threshold", annotation_font_color="#E8E6DF")
+                        annotation_text="Decision threshold", annotation_font_color="#E8E6DF")
                         prob_fig.update_layout(
                             title=dict(text="Degradation Probability Over Time", font=dict(color="#E8E6DF", size=15)),
                             height=280, margin=dict(l=10, r=10, t=40, b=10),
@@ -579,7 +579,7 @@ elif page == "IMS Bearing RUL":
                     status_ph.error(f"Stream error at reading {i}: {e}")
                     break
 
-            status_ph.markdown(f"**Stream complete** — {len(stream_subset)} readings processed across the bearing's full life.")
+            status_ph.markdown(f"Stream complete — {len(stream_subset)} readings processed across the bearing's full life.")
 
     with ims_tab3:
         samples2 = pd.read_csv(SAMPLE_DIR / "ims_stage2_samples.csv")
