@@ -510,7 +510,7 @@ elif page == "IMS Bearing RUL":
         stream_data = pd.read_csv(SAMPLE_DIR / "ims_live_feed.csv")
         feature_cols_stream = [c for c in stream_data.columns if c not in ("timestamp", "rul_hours", "label")]
 
-        st.caption("Streaming a real besaring's entire life, in order, watch degradation probability rise as it approaches failure")
+        st.caption("Streaming a real bearing's entire life, in order, watch degradation probability rise as it approaches failure")
 
         col_a, col_b = st.columns(2)
         speed = col_a.slider("Playback sspeed (sec/reading)", 0.1, 0.5, 0.2, key="ims_speed")
