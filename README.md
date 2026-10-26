@@ -1,4 +1,4 @@
-# Goebel — A Multi-Asset Predictive Maintenance Platform
+# Goebel: A Multi-Asset Predictive Maintenance Platform
 
 > Named for Kai Goebel, the NASA prognostics researcher behind two of the
 > four public datasets this project builds on (C-MAPSS and the IMS
